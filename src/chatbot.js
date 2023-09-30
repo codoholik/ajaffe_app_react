@@ -1,15 +1,14 @@
 import BotMessage from './Bot';
 import axios from 'axios';
-// import ReactDOM from 'react-dom';
+import OtpForm from './OtpForm';
 import SendMessage from './SendMessage';
 import { useState } from 'react';
 import UserMessage from './User';
 import GreetingOptions from './GreetingOptions';
-import otp_form from './SendMessage';
-
 
 
 const Chatbot = () => {
+    const [validate_otp, setvalidateotp] = useState(null);
     // bot text is displayed using useRef
     const [botmsg, setbotmsg] = useState(null)
     const chatBotState = (text) =>{
@@ -25,34 +24,29 @@ const Chatbot = () => {
         setotpform(otp)
     }
 
-    // const [greetings, setgreetings] = useState(null)
-    // const chatGreetingState = (options) =>{
-    //     setgreetings(options)
-    // }
-
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     const handleKeyDown = (event) =>{
         if (event.key === 'Enter'){
+            console.log("Pressed")
             if (!emailRegex.test(event.target.value)){
                 console.log('please enter valid email id');
             }
             else{
                 const value = event.target.value;
-                // props.right_side(value)
                 chatUserState(value)
                 event.target.value = ''
-                axios.post('locahost:8000/opt_generator', {'email': value}).then(response => {
-                    chatBotState(response.data.message)
-                    chatBotState("Enter your OTP here")
-                    const user_otp = otp_form()
-                    chatBotState(user_otp)
+                axios.post('http://localhost:8000/otp_generator', {'email': value}).then(response => {
+                    chatBotState(response.data.message);
+                    chatBotState("Enter your OTP here");
+                    setvalidateotp(true);
                 });
             }
         }
     }
-    const otp_message = () =>{
-        const otp_value = document.getElementById('otp_val').value
-        axios.post('locahost:8000/otp_validation', {'otp': otp_value}).then(response => {
+
+    const otp_message = (otp_input_id) =>{
+        const otp_value = document.getElementById(otp_input_id).value.trim();
+        axios.post('http://localhost:8000/otp_validation', {'otp': otp_value}).then(response => {
             if (response.data.success === true){
                 otpFormState(otp_value)
             } 
@@ -142,6 +136,7 @@ const Chatbot = () => {
                     <BotMessage msg={userGreetings} />
                     {botmsg && <BotMessage msg={botmsg}/>}
                     {usermsg && <UserMessage content={usermsg} />}
+                    {validate_otp && <OtpForm validate_otpfunc={otp_message} />}
                     {otpform && <GreetingOptions />}
                 </ul>
             </div>

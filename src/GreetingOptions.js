@@ -3,8 +3,8 @@
 const GreetingOptions = () => {
     
     return(
-        <li classNameName="is-ai animation">
-        <div classNameName="is-ai__profile-picture">
+        <li className="is-ai animation">
+        <div className="is-ai__profile-picture">
             <svg className="icon-avatar" viewBox="0 0 32 32">
             <use xlinkHref="#avatar"></use>
             </svg>
