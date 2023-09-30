@@ -1,51 +1,73 @@
 import BotMessage from './Bot';
-// import axios from 'axios';
+import axios from 'axios';
 // import ReactDOM from 'react-dom';
-// import UserMessage from './User';
 import SendMessage from './SendMessage';
-import { useRef } from 'react';
+import { useState } from 'react';
+import UserMessage from './User';
+import GreetingOptions from './GreetingOptions';
+import otp_form from './SendMessage';
 
 
 
 const Chatbot = () => {
-    const botRef = useRef(null);
     // bot text is displayed using useRef
-    const chatBotRef = (text) =>{
-        console.log(text)
-        const li = `<li class="is-ai animation">
-        <div class="is-ai__profile-picture">
-            <svg class="icon-avatar" viewBox="0 0 32 32">
-                <use xlink:href="#avatar" />
-            </svg>
-        </div>
-        <span class="chatbot__arrow chatbot__arrow--left"></span>
-        <div class="chatbot__message">
-            ${text}
-        </div>
-        </li>`;
-        if (botRef.current){
-            botRef.current.innerHTML += li;
-        }
+    const [botmsg, setbotmsg] = useState(null)
+    const chatBotState = (text) =>{
+        setbotmsg(text)
     }
     // user text is displayed by inner html using useRef
-    const chatUserRef = (text) =>{
-        const li = `<li class='is-user animation'>
-            <p class='chatbot__message'>
-                ${text}
-            </p>
-            <span class='chatbot__arrow chatbot__arrow--right'></span>
-        </li>`
-        if (botRef.current){
-            botRef.current.innerHTML += li;
+    const [usermsg, setusermsg] = useState(null)
+    const chatUserState = (text) =>{
+        setusermsg(text)
+    }
+    const [otpform, setotpform] = useState(null)
+    const otpFormState = (otp) =>{
+        setotpform(otp)
+    }
+
+    // const [greetings, setgreetings] = useState(null)
+    // const chatGreetingState = (options) =>{
+    //     setgreetings(options)
+    // }
+
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    const handleKeyDown = (event) =>{
+        if (event.key === 'Enter'){
+            if (!emailRegex.test(event.target.value)){
+                console.log('please enter valid email id');
+            }
+            else{
+                const value = event.target.value;
+                // props.right_side(value)
+                chatUserState(value)
+                event.target.value = ''
+                axios.post('locahost:8000/opt_generator', {'email': value}).then(response => {
+                    chatBotState(response.data.message)
+                    chatBotState("Enter your OTP here")
+                    const user_otp = otp_form()
+                    chatBotState(user_otp)
+                });
+            }
         }
+    }
+    const otp_message = () =>{
+        const otp_value = document.getElementById('otp_val').value
+        axios.post('locahost:8000/otp_validation', {'otp': otp_value}).then(response => {
+            if (response.data.success === true){
+                otpFormState(otp_value)
+            } 
+            else{
+                chatBotState("Wrong OTP value entered!")
+            }
+        })
     }
 
     // Perform actions based on the clicked button
     const handleButtonClick = (buttonName) => {
         switch (buttonName) {
             case 'Employee':
-                chatUserRef(buttonName)
-                chatBotRef('Enter your email id')
+                chatUserState(buttonName)
+                chatBotState('Enter your email id')
                 // ReactDOM.render(<BotMessage msg={'enter your email_id'} />, document.getElementById('bot_message'))
                 // userMessage(`${buttonName}`);
                 // scrollDown();
@@ -104,18 +126,6 @@ const Chatbot = () => {
         <button key={greetingButton} onClick={() => handleButtonClick(greetingButton)}>{greetingButton}</button>
         )
     
-    // user enters then input text shows up and disappers from input box
-    // const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    // const handleKeyDown = (event) =>{
-    //     if (event.key === 'Enter'){
-    //         const value = event.target.value
-    //         chatUserRef(value)
-    //         event.target.value = ''
-    //     }
-    //     if (!emailRegex(event.target.value)){
-
-    //     }
-    // }
     return (
         <div className='chatbot'>
             <div className="chatbot__header">
@@ -128,11 +138,14 @@ const Chatbot = () => {
                 </svg>
             </div>
             <div className="chatbot__message-window">
-                <ul className="chatbot__messages" ref={botRef}>
+                <ul className="chatbot__messages">
                     <BotMessage msg={userGreetings} />
+                    {botmsg && <BotMessage msg={botmsg}/>}
+                    {usermsg && <UserMessage content={usermsg} />}
+                    {otpform && <GreetingOptions />}
                 </ul>
             </div>
-            <SendMessage right_side={chatUserRef} left_side={chatBotRef} />
+            <SendMessage key_down={handleKeyDown} right_side={chatUserState} left_side={chatBotState} />
             <svg style={{display: 'none'}}>
                 <defs>
                     <symbol
