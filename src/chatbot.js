@@ -3,22 +3,35 @@ import axios from 'axios';
 import OtpForm from './OtpForm';
 import SendMessage from './SendMessage';
 import { useState } from 'react';
-import UserMessage from './User';
+// import UserMessage from './User';
 import GreetingOptions from './GreetingOptions';
 
 
 const Chatbot = () => {
+    const [messages, setMessages] = useState([]);
+
+    const chatUserState = (text) => {
+        setMessages(prevMessages => {
+            const usermessages = [...prevMessages];
+            usermessages.push({
+              'user': text
+            });
+            return usermessages;
+        });
+    }
+
+    const chatBotState = (text) => {
+        setMessages(prevMessages => {
+            const botmessages = [...prevMessages];
+            botmessages.push({
+              'bot': text
+            });
+            return botmessages;
+        });
+    }
+
+
     const [validate_otp, setvalidateotp] = useState(null);
-    // bot text is displayed using useRef
-    const [botmsg, setbotmsg] = useState(null)
-    const chatBotState = (text) =>{
-        setbotmsg(text)
-    }
-    // user text is displayed by inner html using useRef
-    const [usermsg, setusermsg] = useState(null)
-    const chatUserState = (text) =>{
-        setusermsg(text)
-    }
     const [otpform, setotpform] = useState(null)
     const otpFormState = (otp) =>{
         setotpform(otp)
@@ -33,7 +46,7 @@ const Chatbot = () => {
             }
             else{
                 const value = event.target.value;
-                chatUserState(value)
+                chatUserState(value);
                 event.target.value = ''
                 axios.post('http://localhost:8000/otp_generator', {'email': value}).then(response => {
                     chatBotState(response.data.message);
@@ -60,21 +73,8 @@ const Chatbot = () => {
     const handleButtonClick = (buttonName) => {
         switch (buttonName) {
             case 'Employee':
-                chatUserState(buttonName)
-                chatBotState('Enter your email id')
-                // ReactDOM.render(<BotMessage msg={'enter your email_id'} />, document.getElementById('bot_message'))
-                // userMessage(`${buttonName}`);
-                // scrollDown();
-                // ask user their email id
-                // botMessage('Enter your email id');
-                // Code to perform when "Search Item" button is clicked
-                // axios.post('{{domain}}{% url "va_agent:otp_generator" %}',{'email':'test.ajaffe.com'})
-                // .then(resp => {
-                    // greetingsOption()
-                // }).catch(err => {
-                //     userMessage.userMessage(err);
-                //     // scrollDown();
-                // });
+                chatUserState('Employee');
+                chatBotState('Enter your email id');
                 break;
             case 'Consumer':
                 // botMessage('Please reach out with your query on csd@ajaffe.com');
@@ -134,8 +134,31 @@ const Chatbot = () => {
             <div className="chatbot__message-window">
                 <ul className="chatbot__messages">
                     <BotMessage msg={userGreetings} />
-                    {botmsg && <BotMessage msg={botmsg}/>}
-                    {usermsg && <UserMessage content={usermsg} />}
+                    {messages.map((message, idx) => (
+                        <li key={idx} className={message.bot ? 'is-ai animation' : 'is-user animation'}>
+                            {message.bot && (
+                                <>
+                                    <div className="is-ai__profile-picture">
+                                        <svg className="icon-avatar" viewBox="0 0 32 32">
+                                            <use xlinkHref="#avatar" />
+                                        </svg>
+                                        </div>
+                                        <span className="chatbot__arrow chatbot__arrow--left"></span>
+                                    <div className="chatbot__message">
+                                        {message.bot}
+                                    </div>
+                                </>
+                            )}
+                            {message.user && (
+                                <>
+                                    <p className='chatbot__message'>
+                                        {message.user}
+                                    </p>
+                                    <span className='chatbot__arrow chatbot__arrow--right'></span>
+                                </>
+                            )}
+                        </li>
+                    ))}
                     {validate_otp && <OtpForm validate_otpfunc={otp_message} />}
                     {otpform && <GreetingOptions />}
                 </ul>
