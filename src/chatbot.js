@@ -52,7 +52,7 @@ const Chatbot = () => {
     const submitOrderStatus = _ => {
         setsingleorderstatusdetail(null);
         const order_no = document.getElementById('order_status_val').value.trim();
-        axios.post('http://localhost:8000/order_status', {
+        axios.post('http://192.168.168.14:8005/order_status', {
           'order_num': order_no
         }).then(resp => {
           const orders_count = resp.data.data.length;
@@ -92,7 +92,7 @@ const Chatbot = () => {
                 const value = event.target.value;
                 chatUserState(value);
                 event.target.value = '';
-                axios.post('http://localhost:8000/otp_generator', {'email': value}).then(response => {
+                axios.post('http://192.168.168.14:8005/otp_generator', {'email': value}).then(response => {
                     chatBotState(response.data.message);
                     chatBotState("Enter your OTP here");
                     setvalidateotp(true);
@@ -104,7 +104,7 @@ const Chatbot = () => {
     const otp_message = (otp_input_id) =>{
         const otp_value = document.getElementById(otp_input_id).value.trim();
         document.getElementById(otp_input_id).value = '';
-        axios.post('http://localhost:8000/otp_validation', {'otp': otp_value}).then(response => {
+        axios.post('http://192.168.168.14:8005/otp_validation', {'otp': otp_value}).then(response => {
             if (response.data.success === true) {
                 otpFormState(otp_value);
             } 
@@ -163,7 +163,7 @@ const Chatbot = () => {
 
           chatBotState('We are sending a mail...');
 
-          axios.post('http://localhost:8000/send_customer_service_inquiry', payload)
+          axios.post('http://192.168.168.14:8005/send_customer_service_inquiry', payload)
           .then(resp => {
             if (resp.data.success === true) {
                 chatBotState('Mail Sent Successfully.');
