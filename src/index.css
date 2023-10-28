@@ -66,6 +66,8 @@ strong {
 
 .chatbot__header:hover {
   background-color: lighten(var(--port-gore), 10%);
+  color: black;
+  border: 1px solid rgb(46, 46, 172);
 }
 
 .chatbot__header p {

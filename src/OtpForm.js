@@ -1,6 +1,6 @@
 export default function OtpForm(props) {
     return (
-        <li className="is-ai animation">
+        <li className="is-ai animation" id="otpform">
             <div className="is-ai__profile-picture">
                 <svg className="icon-avatar" viewBox="0 0 32 32">
                     <use xlinkHref="#avatar" />

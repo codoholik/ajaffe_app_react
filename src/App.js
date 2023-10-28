@@ -4,7 +4,7 @@ import ChatBot from './chatbot';
 
 const App = () => {
   return (
-      <div>
+      <div className="body-background">
         <ChatBot />
       </div>
   );

@@ -2,12 +2,25 @@ import BotMessage from './Bot';
 import axios from 'axios';
 import OtpForm from './OtpForm';
 import SendMessage from './SendMessage';
-import { useState } from 'react';
-// import UserMessage from './User';
+import { useState, useRef, useEffect } from 'react';
 import GreetingOptions from './GreetingOptions';
+import OrderStatusForm from './orderstatusform';
+import SingleOrderStatusDetail from './singleorderstatusdetail';
+import CustomerServiceForm from './customer_service_form';
+import { useNavigate } from 'react-router-dom';
 
 
 const Chatbot = () => {
+    const navigate = useNavigate();
+    
+    const chatbot_window = useRef();
+    // This hook will automatically calls whenever component re-renders or mounted in DOM.
+    useEffect(_ => {
+        if (chatbot_window.current) {
+            chatbot_window.current.scrollTop = chatbot_window.current.scrollHeight;
+        }
+    });
+
     const [messages, setMessages] = useState([]);
 
     const chatUserState = (text) => {
@@ -30,24 +43,55 @@ const Chatbot = () => {
         });
     }
 
+    // this state will hold whether to show view more button in single order status details or not
+    const [viewmoresingleorderstatusdetail, setviewmoresingleorderstatusdetail] = useState(false);
+    // this state will hold whether to show single order status details or not
+    const [singleorderstatusdetail, setsingleorderstatusdetail] = useState(null);
+    // this state will hold whether to show order status form or not
+    const [orderstatusform, setorderstatusform] = useState(null);
+    const submitOrderStatus = _ => {
+        setsingleorderstatusdetail(null);
+        const order_no = document.getElementById('order_status_val').value.trim();
+        axios.post('http://localhost:8000/order_status', {
+          'order_num': order_no
+        }).then(resp => {
+          const orders_count = resp.data.data.length;
+          if (orders_count === 0) {
+            chatBotState('No orders found.');
+          } else if (orders_count === 1) {
+            // set the state to show the single order status details view
+            setsingleorderstatusdetail(resp.data.data[0]);
+          } else {
+            // set the state to show the single order status details view
+            setsingleorderstatusdetail(resp.data.data[0]);
+            setviewmoresingleorderstatusdetail(true);
+          }
+        }).catch(_ => {
+          chatUserState('Unable to fetch the results, Please reach out at csd@ajaffe.com');
+        });
+    }
 
+    const openAllOrdersPage = order_no => {
+        navigate(`/view/${order_no}/allorders`);
+    }
+
+    const [customerservice, setcustomerservice] = useState(null);
     const [validate_otp, setvalidateotp] = useState(null);
-    const [otpform, setotpform] = useState(null)
-    const otpFormState = (otp) =>{
+    const [otpform, setotpform] = useState(null);
+    const otpFormState = (otp) => {
         setotpform(otp)
     }
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    const handleKeyDown = (event) =>{
-        if (event.key === 'Enter'){
-            console.log("Pressed")
-            if (!emailRegex.test(event.target.value)){
-                console.log('please enter valid email id');
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            if (!emailRegex.test(event.target.value)) {
+                chatBotState('Please enter a valid email.');
             }
-            else{
+            else {
                 const value = event.target.value;
                 chatUserState(value);
-                event.target.value = ''
+                event.target.value = '';
                 axios.post('http://localhost:8000/otp_generator', {'email': value}).then(response => {
                     chatBotState(response.data.message);
                     chatBotState("Enter your OTP here");
@@ -59,12 +103,13 @@ const Chatbot = () => {
 
     const otp_message = (otp_input_id) =>{
         const otp_value = document.getElementById(otp_input_id).value.trim();
+        document.getElementById(otp_input_id).value = '';
         axios.post('http://localhost:8000/otp_validation', {'otp': otp_value}).then(response => {
-            if (response.data.success === true){
-                otpFormState(otp_value)
+            if (response.data.success === true) {
+                otpFormState(otp_value);
             } 
-            else{
-                chatBotState("Wrong OTP value entered!")
+            else {
+                chatBotState("Wrong OTP value entered!");
             }
         })
     }
@@ -83,46 +128,68 @@ const Chatbot = () => {
                 // botMessage('Please reach out with your query on csd@ajaffe.com');
                 break;
             case 'Search Item':
-                // userMessage(`you selected ${buttonName}`);
-            // scrollDown();
-            // Code to perform when "Search Item" button is clicked
-            // axios.get('{{domain}}{% url "va_agent:listitems" %}')
-            // .then(resp => {
-            //     // Assuming you have an HTML response stored in a variable called 'htmlResponse'
-            //     const htmlResponse = resp.data;
-            //     // Open the HTML response in a new tab
-            //     const newTab = window.open();
-            //     newTab.document.write(htmlResponse);
-            //     newTab.document.close();
-            // }).catch(err => {
-            //     const text = 'Error in opening a page';
-            //     userMessage.userMessage(text);
-            //     // scrollDown();
-            // });
+                chatUserState(`You selected ${buttonName}`);
+                navigate('/item/search');
                 break;
             case 'Search Price':
-                // Code to perform when "Search Price" button is clicked
+                break;
+            case 'Order Status':
+                chatBotState('Enter your order_number.');
+                setorderstatusform(true);
                 break;
             case 'Help':
-                // Code to perform when "Help" button is clicked
                 break;
             case 'Send Questions to Customer Service':
-                // Code to perform when "Send Questions to Customer Service" button is clicked
+                setcustomerservice(true);
                 break;
             default:
                 break;
         }
     }
 
+    // This function will send the inquiry to customer
+    const submitCustomerServiceForm = _ => {
+        const payload = {
+            'name': document.getElementById('customer_service_name').value.trim(),
+            'email': document.getElementById('customer_service_email').value.trim(),
+            'msg': document.getElementById('customer_service_message').value.trim()
+          }
+          document.getElementById('customer_service_name').value = '';
+          document.getElementById('customer_service_email').value = '';
+          document.getElementById('customer_service_message').value = '';
+
+          document.getElementById('customerservice').style.display = 'none';
+          document.getElementById('otpform').style.display = 'none';
+
+          chatBotState('We are sending a mail...');
+
+          axios.post('http://localhost:8000/send_customer_service_inquiry', payload)
+          .then(resp => {
+            if (resp.data.success === true) {
+                chatBotState('Mail Sent Successfully.');
+            } else {
+                chatBotState('Mail could not be delivered, please contact at csd@ajaffe.com.');
+            }
+          })
+          .catch(_ => {
+            chatBotState('Mail could not be delivered, please contact at csd@ajaffe.com.');
+        });
+    }
+
     // creating greeting buttons for users
     const greetingButtons = ['Employee', 'Consumer', 'Retailer'];
     const userGreetings = greetingButtons.map(greetingButton =>
-        <button key={greetingButton} onClick={() => handleButtonClick(greetingButton)}>{greetingButton}</button>
+        <button key={greetingButton} className="btn btn-outline-primary" onClick={_ => handleButtonClick(greetingButton)}>{greetingButton}</button>
         )
-    
+
+    const [chatbotcloser, setchatbotcloser] = useState(false);
+    const toggleClass = _ => {
+        setchatbotcloser(prevchatbotcloser => !prevchatbotcloser);
+    }
+
     return (
-        <div className='chatbot'>
-            <div className="chatbot__header">
+        <div className={chatbotcloser === true ? 'chatbot chatbot--closed' : 'chatbot'}>
+            <div className="chatbot__header" onClick={toggleClass}>
                 <p style={{margin: 0, fontSize:'24px'}}>AJAFFE VA</p>
                 <svg className="chatbot__close-button icon-close" viewBox="0 0 32 32">
                 <use xlinkHref="#close" />
@@ -131,7 +198,7 @@ const Chatbot = () => {
                 <use xlinkHref="#speech" />
                 </svg>
             </div>
-            <div className="chatbot__message-window">
+            <div className="chatbot__message-window" ref={chatbot_window}>
                 <ul className="chatbot__messages">
                     <BotMessage msg={userGreetings} />
                     {messages.map((message, idx) => (
@@ -160,10 +227,13 @@ const Chatbot = () => {
                         </li>
                     ))}
                     {validate_otp && <OtpForm validate_otpfunc={otp_message} />}
-                    {otpform && <GreetingOptions />}
+                    {otpform && <GreetingOptions handler={handleButtonClick} />}
+                    {customerservice && <CustomerServiceForm submitCustomerService={submitCustomerServiceForm} />}
+                    {orderstatusform && <OrderStatusForm handleSubmit={submitOrderStatus} />}
+                    {singleorderstatusdetail && <SingleOrderStatusDetail order={singleorderstatusdetail} viewmorebtn={viewmoresingleorderstatusdetail} loadallorderspage={openAllOrdersPage} />}
                 </ul>
             </div>
-            <SendMessage key_down={handleKeyDown} right_side={chatUserState} left_side={chatBotState} />
+            <SendMessage key_down={handleKeyDown} />
             <svg style={{display: 'none'}}>
                 <defs>
                     <symbol
