@@ -58,20 +58,25 @@ const Chatbot = () => {
           const orders_count = resp.data.data.length;
           if (orders_count === 0) {
             chatBotState('No orders found.');
+            setorderstatusform(null);
           } else if (orders_count === 1) {
             // set the state to show the single order status details view
             setsingleorderstatusdetail(resp.data.data[0]);
+            setorderstatusform(null);
           } else {
             // set the state to show the single order status details view
             setsingleorderstatusdetail(resp.data.data[0]);
+            setorderstatusform(null);
             setviewmoresingleorderstatusdetail(true);
           }
         }).catch(_ => {
           chatUserState('Unable to fetch the results, Please reach out at csd@ajaffe.com');
+          setorderstatusform(null);
         });
     }
 
     const openAllOrdersPage = order_no => {
+        setsingleorderstatusdetail(null);
         navigate(`/view/${order_no}/allorders`);
     }
 
@@ -79,14 +84,42 @@ const Chatbot = () => {
     const [validate_otp, setvalidateotp] = useState(null);
     const [otpform, setotpform] = useState(null);
     const otpFormState = (otp) => {
-        setotpform(otp)
+        setotpform(otp);
+        setvalidateotp(null);
     }
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             if (!emailRegex.test(event.target.value)) {
-                chatBotState('Please enter a valid email.');
+                const text = event.target.value;
+                chatUserState(text);
+                event.target.value = '';
+                const anchorTagRegex = /<a\b[^>]*>(.*?)<\/a>/;
+                // make a post call to va agent openai api
+                axios.post('http://va.ajaffe.com:8085/openai', {
+                    'prompt': text
+                })
+                .then(response => {
+                    if (anchorTagRegex.test(response.data.chatbot_answer)) {
+                        chatBotState(response.data.chatbot_answer.replace(/\n/g, '<br>'));
+                    } else {
+                        chatBotState(response.data.chatbot_answer.replace(/(.*?):/g, '<strong>$1</strong>:').replace(/\n/g, '<br>'));
+                    }
+                    // add the price link
+                    // Extract the first item ID
+                    const firstItem = response.data.chatbot_answer.split("\n\n")[0];
+                    const matchItemId = firstItem.match(/Item Id: (.*?)\s/);
+                    const firstItemId = matchItemId ? matchItemId[1] : "";
+                    if(firstItemId !== '') {
+                        const price_link = `https://ajaffe.com/catalogsearch/result/?q=${firstItemId}`;
+                        const a = document.createElement('a');
+                        a.setAttribute('href', price_link);
+                        a.setAttribute('target', '_blank');
+                        a.textContent = price_link;
+                    }
+                })
+                .catch(err => chatBotState('Please contact at csd@ajaffe.com.'));
             }
             else {
                 const value = event.target.value;
@@ -167,12 +200,15 @@ const Chatbot = () => {
           .then(resp => {
             if (resp.data.success === true) {
                 chatBotState('Mail Sent Successfully.');
+                setcustomerservice(null);
             } else {
                 chatBotState('Mail could not be delivered, please contact at csd@ajaffe.com.');
+                setcustomerservice(null);
             }
           })
           .catch(_ => {
             chatBotState('Mail could not be delivered, please contact at csd@ajaffe.com.');
+            setcustomerservice(null);
         });
     }
 
@@ -211,8 +247,7 @@ const Chatbot = () => {
                                         </svg>
                                         </div>
                                         <span className="chatbot__arrow chatbot__arrow--left"></span>
-                                    <div className="chatbot__message">
-                                        {message.bot}
+                                    <div className="chatbot__message" dangerouslySetInnerHTML={{__html: message.bot}}>
                                     </div>
                                 </>
                             )}
