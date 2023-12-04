@@ -11,7 +11,7 @@ export default function LoadAllOrders() {
     const [orders, setorders] = useState(null);
 
     useEffect(_ => {
-        axios.get(`https://va.ajaffe.com:8000/get_all_orders?order_num=${orderno}`)
+        axios.get(`https://vabackend.ajaffe.com/get_all_orders?order_num=${orderno}`)
         .then(resp => {
             const result = resp.data;
             setsalesData({
