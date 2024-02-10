@@ -114,20 +114,12 @@ body {
     min-height: auto;
     padding: 10px;
     font-family: 'Poppins', sans-serif;
-    /*background-color: #F4EBD0;*/
-    /*#aec6cf*/
-
     background-color: #C0C0C0;
-    background-image: url('/home/rachit/Documents/NoteBook_BackUp/CODE/integration/src/EngagementRing.jpg');
+    background-image: url('./images/EngagementRing.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
-    /* Keep the background fixed */
-    /*display: flex;
-    /* background: linear-gradient(115deg, #56d8e4 10%, #9f01ea 90%); */
-    /* background-color: #adb2d3; */
-    /* background-image: linear-gradient(315deg, #adb2d3 0%, #ff6b6c 74%); */
 }
 
 td {
