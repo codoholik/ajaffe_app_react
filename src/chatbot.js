@@ -170,6 +170,9 @@ const Chatbot = () => {
                 chatBotState('Enter your order_number.');
                 setorderstatusform(true);
                 break;
+            case 'Create Order':
+                chatUserState(`You selected ${buttonName}`);
+                navigate('/order/create');
             case 'Help':
                 break;
             case 'Send Questions to Customer Service':

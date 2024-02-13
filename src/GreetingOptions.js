@@ -10,6 +10,7 @@ export default function GreetingOptions(props) {
             <button className="btn btn-outline-primary" onClick={_ => props.handler('Search Item')}>Search Item</button>
             <button className="btn btn-outline-primary" onClick={_ => props.handler('Search Price')}>Search Price</button>
             <button className="btn btn-outline-primary" onClick={_ => props.handler('Order Status')}>Order Status</button>
+            <button className="btn btn-outline-primary" onClick={_ => props.handler('Create Order')}>Create Order</button>
             <button className="btn btn-outline-primary" onClick={_ => props.handler('Help')}>Help</button>
             <button className="btn btn-outline-primary" onClick={_ => props.handler('Send Questions to Customer Service')}>Ask Customer Service</button>
         </div>
