@@ -15,7 +15,7 @@
 
 @media only screen and (max-width: 767px) {
     .container {
-      margin-top: 100px; /* Adjust the margin for phones */
+      margin-top: 100px;
     }
   }
 
@@ -79,7 +79,7 @@
 #customerPO {
     border-radius: 25px;
     border: 2px solid #687E86;
-    /* #609 */
+   
     padding: 20px;
     max-width: 400px;
     height: 20px;
@@ -97,18 +97,14 @@
     opacity: 0.75;
 }
 
-/* h1 {
-      font-style: italic;
-      font-family: 'Tangerine', serif;
-      font-size: 70px;
-  } */
+
 
 h1 {
     font-size: 60px
 }
 
 body {
-    /* display: inline-flex; */
+   
     align-items: center;
     justify-content: center;
     min-height: auto;
@@ -127,11 +123,8 @@ td {
 }
 
 .container {
-    /* Adjust as needed to center vertically */
-    /* max-width: 1000px; */
     border-radius: 0%;
     opacity: 0.85;
-    /* background: #FCFBF4; */
     background-color: #fff;
     width: auto;
     height: auto;
@@ -145,7 +138,6 @@ td {
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
     background: -webkit-linear-gradient(right, #56d8e4, #9f01ea, #56d8e4, #9f01ea);
-    /* -webkit-background-clip: text; */
     -webkit-text-fill-color: transparent;
 }
 
@@ -185,7 +177,6 @@ form .form-row .textarea {
 .textarea textarea:valid~label {
     transform: translateY(-20px);
     font-size: 14px;
-    /* color: #3498db; */
     color: #523A28;
 }
 
@@ -203,7 +194,7 @@ form .form-row .textarea {
 }
 
 .textarea label {
-    /* width: 100%; */
+   
     width: auto;
     bottom: 40px;
     background: #fff;
@@ -314,46 +305,41 @@ th {
 
 .column {
     float: left;
-    /* width: fit-content; */
+   
     width: 450px;
     padding: 0 10px;
     margin: 40px;
 }
 
-/* Remove extra left and right margins, due to padding in columns */
+
 .row {
     margin: 0 -5px;
 }
 
-/* Clear floats after the columns */
+
 .row:after {
     content: "";
     display: table;
     clear: both;
 }
 
-/* Style the counter cards */
+
 .card {
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     height: fit-content;
     width: 100%;
-    /* this adds the "card" effect */
     padding: 16px;
-    /* text-align: center; */
     background-color: #fff;
-    /* #F4EBD0 */
+   
 }
 
 .card .scrollable-form {
     max-height: 200px;
-    /* Set the maximum height for the form */
     overflow-y: auto;
-    /* Add vertical scrollbar if content exceeds the maximum height */
 }
 
 p {
-    margin-left: 110px;
-    margin-top: 20px;
+    margin-left: 40%;
 }
 
 #Image-Margin {
@@ -363,10 +349,6 @@ p {
     top: 50%
 }
 
-/* <!-- HTML !-->
-  <button class="button-28" role="button">Button 28</button> */
-
-/* CSS */
 .button-28 {
     appearance: none;
     background-color: transparent;
@@ -382,14 +364,9 @@ p {
     line-height: normal;
     margin: 0 auto;
     min-height: 60px;
-    /* min-width: 0; */
-
     max-width: 200px;
-    /* position:relative; */
     margin-top: 3%;
     margin-left: 43%;
-    /* transform: translateX(-50%); */
-
     outline: none;
     padding: 16px 24px;
     text-align: center;
@@ -432,6 +409,5 @@ p {
 #Insert_Here_3_A,
 #Insert_Here_3_B,
 #Insert_Here_1_C {
-    /* margin-bottom: -20px; */
     line-height: 0.5;
 }

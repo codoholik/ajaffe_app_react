@@ -5,3 +5,10 @@
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
 }
+
+/* Override _grid.scss styles */
+.row > * {
+    /* Set width to auto or any other desired value */
+    width: 28% !important;
+  }
+  

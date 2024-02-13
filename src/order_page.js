@@ -9,9 +9,7 @@ import NoteTextArea from './note_area';
 const quality_types = ["CZGH", "SI2GH", "SI3GH", "VS2GH", "VS2-SI1HI", "SI-I1"];
 const metal_types = ["10K White", "10K Yellow", "14K Rose", "14K White", "14K Yellow", "18K White", "18K Yellow", "22K White", "22K Yellow", "9K Rose", "9K White", "9K Yellow", "Platinum"];
 const choice = ["Yes", "No"];
-
-function OrderPage() {
-
+function App() {
   const [timeStamp, setTimeStamp] = useState();
 
   useEffect(() => {
@@ -23,57 +21,37 @@ function OrderPage() {
   }, []);
 
   function getMetalValue(row) {
-
     let place = row.toString();
-
     let idx = "Metal" + place;
-
     let selectValue_temp = document.getElementById(idx).value;
-
     return selectValue_temp;
   }
 
   function getQualityValue(row) {
-
     let place = row.toString();
-
     let idx = "Quality" + place;
-
     let selectValue_temp = document.getElementById(idx).value;
-
     return selectValue_temp;
   }
 
   function getCenterQualityValue(row) {
-
     let place = row.toString();
-
     let idx = "CenterQuality" + place;
-
     let selectValue_temp = document.getElementById(idx).value;
-
     return selectValue_temp;
   }
 
   function getCustomerCenterValue(row) {
-
     let place = row.toString();
-
     let idx = "CustomerCenter" + place;
-
     let selectValue_temp = document.getElementById(idx).value;
-
     return selectValue_temp;
   }
 
   function getCenterValue(row) {
-
     let place = row.toString();
-
     let idx = "Center" + place;
-
     let selectValue_temp = document.getElementById(idx).value;
-
     return selectValue_temp;
   }
 
@@ -82,26 +60,20 @@ function OrderPage() {
   const handleImage = async (e, currRow) => {
     try {
       const file = e.target.files[0];
-
       if (!file) {
         console.error('No file selected');
         return;
       }
-
       const reader = new FileReader();
-
       reader.onload = function (e) {
         const imageDataUrl = e.target.result;
-
         const imageData = {
           fileName: file.name,
           fileType: file.type,
           base64Data: imageDataUrl.split(',')[1],
         };
-
         setBase64Data((prevData) => ({ ...prevData, [currRow]: imageData.base64Data }));
       };
-
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Error handling image:', error);
@@ -117,34 +89,27 @@ function OrderPage() {
     }));
   };
 
+  useEffect(() => {}, [noteInputs]);
+
   function addRow() {
     let currRow = globalRow.toString();
-
     let table = document.getElementById("DataTable").getElementsByTagName('tbody')[0];
     let newRow = table.insertRow(table.rows.length);
     newRow.id = 'Row' + currRow.toString();
-
     for (let i = 0; i < 9; i++) {
       if (i === 4 || i === 6) {
         let cell = newRow.insertCell(i);
-        // Create a select element
         let select = document.createElement("select");
         select.className = "form-control";
         if (i === 4) {
           let idx = "Quality" + currRow;
           select.id = idx;
         }
-
         else {
           let idx = "CenterQuality" + currRow;
           select.id = idx;
         }
-
         let j = 0;
-
-        // // Add options to the select element
-        // let option = document.createElement("option");
-
         if (j === 0) {
           let option = document.createElement("option");
           option.disabled = true;
@@ -158,27 +123,16 @@ function OrderPage() {
           option.text = quality_types[j - 1];
           select.appendChild(option);
         }
-
-        // Append the select element to the cell
         cell.appendChild(select);
         continue;
       }
       else if (i === 2) {
         let cell = newRow.insertCell(i);
-        // cell.textContent = "Data";
-
-        // Create a select element
         let select = document.createElement("select");
         select.className = "form-control";
-
         let idx = "Metal" + currRow;
         select.id = idx;
-
         let j = 0;
-
-        // // Add options to the select element
-        // let option = document.createElement("option");
-
         if (j === 0) {
           let option = document.createElement("option");
           option.disabled = true;
@@ -192,19 +146,13 @@ function OrderPage() {
           option.text = metal_types[j - 1];
           select.appendChild(option);
         }
-
-        // Append the select element to the cell
         cell.appendChild(select);
         continue;
       }
       else if (i === 7 || i === 8) {
         let cell = newRow.insertCell(i);
-        // cell.textContent = "Data";
-
-        // Create a select element
         let select = document.createElement("select");
         select.className = "form-control";
-
         if (i === 7) {
           let idx = "CustomerCenter" + currRow;
           select.id = idx;
@@ -212,14 +160,8 @@ function OrderPage() {
         else {
           let idx = "Center" + currRow;
           select.id = idx;
-          // select.onChange = CellLogic(globalRow);
         }
-
         let j = 0;
-
-        // // Add options to the select element
-        // let option = document.createElement("option");
-
         if (j === 0) {
           let option = document.createElement("option");
           option.disabled = true;
@@ -233,18 +175,10 @@ function OrderPage() {
           option.text = choice[j - 1];
           select.appendChild(option);
         }
-
         select.onchange = (event) => {
           handleInputThis(event);
         };
-
-        // Append the select element to the cell
         cell.appendChild(select);
-
-        //Add an EventListner 
-        // const element = document.getElementById('idx');
-        // element.addEventListener('change', CellLogic());
-
         continue;
       }
       let cell = newRow.insertCell(i);
@@ -252,17 +186,14 @@ function OrderPage() {
       input.type = "text" + currRow;
       input.className = "form-control";
       cell.appendChild(input);
-
     }
 
     let cell = newRow.insertCell(9);
     let input = document.createElement("input");
     input.type = "file";
     input.id = "FileInput";
-
-    // Call handleImage with the current row ID
+    input.multiple = true;
     input.addEventListener('change', (e) => handleImage(e, newRow.id));
-
     cell.appendChild(input);
 
     cell = newRow.insertCell(10);
@@ -272,32 +203,24 @@ function OrderPage() {
       <NoteTextArea
         rowId={uniqueRowId.toString()}
         value={noteInputs[uniqueRowId] ? noteInputs[uniqueRowId].note : ''}
-        // onChange={(value) => handleNoteInputChange(uniqueRowId, value)}
         onChange={handleNoteInputChange}
       />,
       componentContainer
     );
     cell.appendChild(componentContainer);
 
-    let actionCell = newRow.insertCell(11);
-
-    //Create a button element
+    let actionCell = newRow.insertCell(11);    
     let deleteButton = document.createElement('button');
     deleteButton.className = 'btn btn-danger button';
     deleteButton.type = 'button';
     deleteButton.style.backgroundColor = '#273B42';
     deleteButton.style.borderWidth = '0px';
     deleteButton.innerHTML = 'Delete <i class="bi bi-dash-circle-fill"></i>';
-
-    // Add a click event listener to the button
     deleteButton.addEventListener('click', function () {
-      deleteRow(newRow.id); // Assuming deleteRow is your delete function, and 'this' refers to the button element
+      deleteRow(newRow.id); 
     });
-
-    // // Set the inner HTML of actionCell
     actionCell.innerHTML = '';
     actionCell.appendChild(deleteButton);
-
     addToValidRows(newRow.id);
     increaseGlobalRow();
   }
@@ -322,27 +245,147 @@ function OrderPage() {
 
     if (row) {
       const rowId = row.id;
-
-      // Remove the row from validRows using its ID
       removeFromValidRows(rowId);
-
-      // Remove the row element from DOM
       row.remove();
-
-      // Update global row count
-      // updateGlobalRow();
     } else {
       console.error('Error: <tr> element not found');
     }
-
     console.log(validRows);
   };
 
+  // async function submitform() {
+  //   let combined_data1 = {};
+  //   let formData = {
+  //     ShippingAccount: Fetch_ShipAcc(),
+  //     Name: Fetch_Name(),
+  //     CustomerPO: Fetch_CustomerPO(),
+  //     DeliveryDate: Fetch_Date(),
+  //     Email: Fetch_Email(),
+  //     Phone: Fetch_Phone(),
+  //     Address1: Fetch_Addr1(),
+  //     Address2: Fetch_Addr2(),
+  //     City: Fetch_City(),
+  //     State: Fetch_State(),
+  //     Zip_Code: Fetch_ZipCode(),
+  //     WebOrderID: timeStamp,
+  //   };
+
+  //   combined_data1 = { ...combined_data1, ...formData };
+
+  //   let table = document.getElementById("DataTable");
+  //   let tbody = table.getElementsByTagName("tbody")[0];
+  //   let rows = tbody.getElementsByTagName("tr");
+
+  //   for (let i = 0; i < rows.length; i++) {
+  //     if (validRows.indexOf(rows[i].id) !== -1) {
+  //       let place = rows[i].id.charAt(rows[i].id.length - 1);
+  //       let cells = rows[i].getElementsByTagName("td");
+  //       let combined_data = {};
+
+  //       for (let j = 0; j < cells.length; j++) {
+  //         if (j === 2) {
+  //           let selectValue = getMetalValue(place);
+  //           let json_metal = {
+  //             Row: i + 1,
+  //             Metal: selectValue,
+  //           }
+  //           combined_data = { ...combined_data, ...json_metal };
+  //         }
+  //         else if (j === 4) {
+  //           let selectValue = getQualityValue(place);
+  //           let json_quality = {
+  //             Row: i + 1,
+  //             Quality: selectValue,
+  //           }
+  //           combined_data = { ...combined_data, ...json_quality };
+  //         }
+  //         else if (j === 6) {
+  //           let selectValue = getCenterQualityValue(place);
+  //           let json_CenterQuality = {
+  //             Row: i + 1,
+  //             CenterQuality: selectValue,
+  //           }
+  //           combined_data = { ...combined_data, ...json_CenterQuality };
+  //         }
+  //         else if (j === 7) {
+  //           let selectValue = getCustomerCenterValue(place);
+  //           let json_CustomerCenter = {
+  //             Row: i + 1,
+  //             CustomerCenter: selectValue,
+  //           }
+  //           combined_data = { ...combined_data, ...json_CustomerCenter };
+  //         }
+  //         else if (j === 8) {
+  //           let selectValue = getCenterValue(place);
+  //           let json_Center = {
+  //             Row: i + 1,
+  //             Center: selectValue,
+  //           }
+  //           combined_data = { ...combined_data, ...json_Center };
+  //         }
+  //         else if (j === 9) {
+  //           let str = base64Data['Row' + place];            
+  //           let json_image = {
+  //             Row: i + 1,
+  //             Image: str || "",
+  //           };
+  //           combined_data = { ...combined_data, ...json_image };
+  //         }
+  //         else {
+  //           let inputElement = cells[j].querySelector(`input, #Row${place}`);
+  //           if (inputElement) {
+  //             let inputValue = inputElement.value;
+  //             if (j === 0) {
+  //               let json_data = {
+  //                 Row: i + 1,
+  //                 Style: inputValue,
+  //               }
+  //               combined_data = { ...combined_data, ...json_data };
+  //             }
+  //             if (j === 1) {
+  //               let json_data = {
+  //                 Row: i + 1,
+  //                 Version: inputValue,
+  //               }
+  //               combined_data = { ...combined_data, ...json_data };
+  //             }
+  //             if (j === 3) {
+  //               let json_data = {
+  //                 Row: i + 1,
+  //                 RingSize: inputValue,
+  //               }
+  //               combined_data = { ...combined_data, ...json_data };
+  //             }
+  //             if (j === 5) {
+  //               let json_data = {
+  //                 Row: i + 1,
+  //                 CenterSize: inputValue,
+  //               }
+  //               combined_data = { ...combined_data, ...json_data };
+  //             }
+  //             if (j === 10) {
+  //               let strr = 'Row' + place;
+  //               let json_data = {
+  //                 Row: i + 1,
+  //                 Note: noteInputs[strr] ? noteInputs[strr] : '',
+  //               }
+  //               combined_data = { ...combined_data, ...json_data };
+  //             }
+  //           }
+  //         }
+  //         let strr = 'Row' + place;
+  //         combined_data1[strr] = combined_data;
+  //       }
+  //     }
+  //     else {
+  //       continue;
+  //     }
+  //   }
+  //   console.log(combined_data1);
+  // }
+
   async function submitform() {
-
-    let combined_data1 = {};
-
-    let formData = {
+    let combined_data1 = {
       ShippingAccount: Fetch_ShipAcc(),
       Name: Fetch_Name(),
       CustomerPO: Fetch_CustomerPO(),
@@ -355,157 +398,69 @@ function OrderPage() {
       State: Fetch_State(),
       Zip_Code: Fetch_ZipCode(),
       WebOrderID: timeStamp,
+        "Rows": {}
     };
-
-
-    combined_data1 = { ...combined_data1, ...formData };
 
     let table = document.getElementById("DataTable");
     let tbody = table.getElementsByTagName("tbody")[0];
     let rows = tbody.getElementsByTagName("tr");
 
     for (let i = 0; i < rows.length; i++) {
+        if (validRows.indexOf(rows[i].id) !== -1) {
+            let place = rows[i].id.charAt(rows[i].id.length - 1);
+            let cells = rows[i].getElementsByTagName("td");
+            let combined_data = {};
 
-      if (validRows.indexOf(rows[i].id) !== -1) {
-
-        let place = rows[i].id.charAt(rows[i].id.length - 1);
-        let cells = rows[i].getElementsByTagName("td");
-
-        let combined_data = {};
-
-        for (let j = 0; j < cells.length; j++) {
-          if (j === 2) {
-            let selectValue = getMetalValue(place);
-            let json_metal = {
-              Row: i + 1,
-              // Key: "Metal",
-              Metal: selectValue,
-            }
-
-            combined_data = { ...combined_data, ...json_metal };
-          }
-          else if (j === 4) {
-            let selectValue = getQualityValue(place);
-
-            let json_quality = {
-              Row: i + 1,
-              // Key: "Quality",
-              Quality: selectValue,
-            }
-
-            combined_data = { ...combined_data, ...json_quality };
-          }
-          else if (j === 6) {
-            let selectValue = getCenterQualityValue(place);
-
-            let json_CenterQuality = {
-              Row: i + 1,
-              CenterQuality: selectValue,
-            }
-
-            combined_data = { ...combined_data, ...json_CenterQuality };
-          }
-          else if (j === 7) {
-            let selectValue = getCustomerCenterValue(place);
-
-            let json_CustomerCenter = {
-              Row: i + 1,
-              CustomerCenter: selectValue,
-            }
-            combined_data = { ...combined_data, ...json_CustomerCenter };
-          }
-          else if (j === 8) {
-            let selectValue = getCenterValue(place);
-            let json_Center = {
-              Row: i + 1,
-              Center: selectValue,
-            }
-
-            combined_data = { ...combined_data, ...json_Center };
-          }
-
-          else if (j === 9) {
-            let str = base64Data['Row' + place];
-            let json_image = {
-              Row: i + 1,
-              Image: str || "",
-            };
-
-            combined_data = { ...combined_data, ...json_image };
-          }
-
-          else {
-
-            let inputElement = cells[j].querySelector(`input, #Row${place}`);
-
-            if (inputElement) {
-              let inputValue = inputElement.value;
-
-              if (j === 0) {
-                let json_data = {
-                  Row: i + 1,
-                  Style: inputValue,
+            for (let j = 0; j < cells.length; j++) {
+                if (j === 2) {
+                    let selectValue = getMetalValue(place);
+                    combined_data['Metal'] = selectValue;
+                } else if (j === 4) {
+                    let selectValue = getQualityValue(place);
+                    combined_data['Quality'] = selectValue;
+                } else if (j === 6) {
+                    let selectValue = getCenterQualityValue(place);
+                    combined_data['CenterQuality'] = selectValue;
+                } else if (j === 7) {
+                    let selectValue = getCustomerCenterValue(place);
+                    combined_data['CustomerCenter'] = selectValue;
+                } else if (j === 8) {
+                    let selectValue = getCenterValue(place);
+                    combined_data['Center'] = selectValue;
+                } else if (j === 9) {
+                    let str = base64Data['Row' + place];
+                    combined_data['Image'] = str || "";
+                } else {
+                    let inputElement = cells[j].querySelector(`input, #Row${place}`);
+                    if (inputElement) {
+                        let inputValue = inputElement.value;
+                        if (j === 0) {
+                            combined_data['Style'] = inputValue;
+                        }
+                        if (j === 1) {
+                            combined_data['Version'] = inputValue;
+                        }
+                        if (j === 3) {
+                            combined_data['RingSize'] = inputValue;
+                        }
+                        if (j === 5) {
+                            combined_data['CenterSize'] = inputValue;
+                        }
+                        if (j === 10) {
+                            combined_data['Note'] = noteInputs['Row' + place] ? noteInputs['Row' + place] : '';
+                        }
+                    }
                 }
-
-                combined_data = { ...combined_data, ...json_data };
-              }
-
-              if (j === 1) {
-                let json_data = {
-                  Row: i + 1,
-                  Version: inputValue,
-                }
-
-                combined_data = { ...combined_data, ...json_data };
-              }
-
-              if (j === 3) {
-                let json_data = {
-                  Row: i + 1,
-                  RingSize: inputValue,
-                }
-                combined_data = { ...combined_data, ...json_data };
-              }
-
-              if (j === 5) {
-                let json_data = {
-                  Row: i + 1,
-                  // Key: "CenterSize",
-                  CenterSize: inputValue,
-                }
-
-                // console.log(json_data);
-                combined_data = { ...combined_data, ...json_data };
-              }
-
-              if (j === 10) {
-
-                let strr = 'Row' + place;
-
-                let json_data = {
-                  Row: i + 1,
-                  // Key: "Note",
-                  Note: noteInputs[strr],
-                }
-
-                combined_data = { ...combined_data, ...json_data };
-              }
             }
-          }
-          //console.log(combined_data);
-          let strr = 'Row' + place;
-
-          combined_data1[strr] = combined_data;
+            combined_data1['Rows']['Row' + place] = { Row: i + 1, ...combined_data };
         }
-      }
-
-      else {
-        continue;
-      }
     }
+
     console.log(combined_data1);
-    // Here we need to call the backend api and pass in the combined_data1 object
-  }
+
+    //console.log(JSON.stringify(combined_data1, null, 2));
+}
+
 
   const CellLogic = (rowId) => {
     const table = document.getElementById('DataTable');
@@ -516,25 +471,18 @@ function OrderPage() {
       let selectCC = 0, selectCT = 0;
 
       cols.forEach((col, j) => {
-        const selects = col.querySelectorAll('select');
-
-        //console.log(`Column ${j}: ${selects.length} selects`);
-
-        // Assuming there's only one select element inside each column
+        const selects = col.querySelectorAll('select'); 
         const selectValue = selects.length > 0 ? selects[0].value : '';
 
         if (j === 7 && selectValue === 'Yes') {
           selectCC = 1;
         }
-
         if (j === 8 && selectValue === 'No') {
           selectCT = 1;
         }
       });
-
       cols.forEach((col, j) => {
         const selects = col.querySelectorAll('select, input');
-
         if ((j === 5) && selectCC === 1) {
           selects.forEach((select) => {
             select.disabled = true;
@@ -550,19 +498,13 @@ function OrderPage() {
     });
   };
 
-
   var handleInputThis = (event) => {
     const inputElement = event.target;
     const current = findClosestTR(inputElement);
 
     if (current) {
       const rowID = current.id;
-
-      // Assuming CellLogic is another function you want to call
       CellLogic(rowID);
-
-      // Additional logic, if needed
-      //console.log('Row ID: ' + rowID);
     }
   };
 
@@ -575,341 +517,175 @@ function OrderPage() {
 
   function Fetch_Name() {
     let item = document.getElementById('item1');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Name' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_1');
-
-    // target.parentNode.(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_Phone() {
     let item = document.getElementById('item2');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Phone' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_1_A');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_ShipAcc() {
     let item = document.getElementById('item3');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Ship Account' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_1_B');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_DeliveryName() {
     let item = document.getElementById('item4');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Delivery Name' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_Addr1() {
     let item = document.getElementById('item5');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Address 1' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2_A');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_Addr2() {
     let item = document.getElementById('item6');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Address 2' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2_B');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_City() {
     let item = document.getElementById('item6_A');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Address 1' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2_C');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_State() {
     let item = document.getElementById('item6_B');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Address 1' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2_D');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_ZipCode() {
     let item = document.getElementById('item6_C');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Address 1' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_2_E');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_CustomerPO() {
     let item = document.getElementById('item7');
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
-    // para.textContent = 'Customer PO' + ' : ' + value;
     para.textContent = value;
-
     const target = document.getElementById('Insert_Here_3');
-
-    // target.parentNode.insertBefore(para, target);
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_ConfirmOrder() {
     let item = document.getElementById("flexCheckDefault");
-
-    // console.log(item);
-
     let value;
-
     if (item.checked) {
       value = "Confirmed";
     }
-
-    // else {
-    //     value = "No";
-    // }
-
     const para = document.createElement('p');
-
     para.textContent = value;
-
     const target = document.getElementById("Insert_Here_3_A");
-
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_UrgentOrder() {
     let item = document.getElementById("flexCheckDefault_1");
-
-    // console.log(item);
-
     let value;
-
     if (item.checked) {
       value = "Urgent";
     }
-
-    // else {
-    //     value = "No";
-    // }
-
     const para = document.createElement('p');
-
     para.textContent = value;
-
     const target = document.getElementById("Insert_Here_3_B");
-
     target.textContent = para.textContent;
-
     return para.textContent;
   }
 
   function Fetch_Email() {
     let item = document.getElementById("item3_A");
-
-    // console.log(item);
-
     let value = item.value;
-
     const para = document.createElement('p');
-
     para.textContent = value;
-
     const target = document.getElementById("Insert_Here_1_C");
-
     target.textContent = para.textContent;
-
     return para.textContent;
   }
-
-  // function Fetch_Date() {
-  //   let dateInput = document.getElementById('item6_D');
-  //   let dateValue = dateInput.value;
-
-  //   const para = document.createElement('p');
-  //   para.textContent = dateValue;
-
-  //   const target = document.getElementById('Insert_Here_2_F');
-  //   target.textContent = 'Date : ' + para.textContent;
-
-  //   return para.textContent;
-  // }
 
   function Fetch_Date() {
     let dateInput = document.getElementById('item6_D');
     let dateValue = dateInput.value;
-
-    // Check if dateValue is not empty
     if (dateValue.trim() !== '') {
       const para = document.createElement('p');
       para.textContent = dateValue;
-
       const target = document.getElementById('Insert_Here_2_F');
       target.textContent = 'Date : ' + para.textContent;
-
       return para.textContent;
     } else {
-      // If dateValue is empty, clear the display and return an empty string
       const target = document.getElementById('Insert_Here_2_F');
-      target.textContent = ''; // Clear the display
-      return ''; // Return an empty string
+      target.textContent = ''; 
+      return ''; 
     }
   }
-
-  // console.log(globalRow);
-
-  // console.log(validRows);
-
-  // 
-  // 
-  // 
 
   return (
     <>
       <div className="container" style={{ maxWidth: 'fit-content', minWidth: 'fit-content', height: 'auto', margin: 'auto' }}>
-
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-
           <h1 style={{ fontFamily: 'Lato-Light', fontStyle: 'normal', fontWeight: 400, WebkitFontSmoothing: 'antialiased', textAlign: 'left', margin: '0' }}>
             A.JAFFE
           </h1>
-
           <h1 id="epochTime" style={{ fontSize: '16px', textAlign: 'right', margin: '0', marginLeft: 'auto' }}>
             Right-Aligned Heading
           </h1>
         </div>
-
         <h1 style={{ minWidth: 'auto', alignItems: 'right', display: 'flex', justifyContent: 'center', fontSize: '12px' }}>EST. 1892 NEW YORK</h1>
-
         <h1 style={{
           fontFamily: 'Lato-Light', fontStyle: 'normal', fontWeight: 400, WebkitFontSmoothing: 'antialiased',
           minWidth: 'auto', alignItems: 'right', display: 'flex', justifyContent: 'center', marginTop: '20px'
         }}>Order</h1>
 
         <form style={{ maxWidth: 'fit-content' }}>
-
-          <div className="row" style={{ maxWidth: 'fit-content' }}>
+          <div className="row">
             <div className="column" id="Target_Column_1">
               <div className="card" style={{ justifyContent: 'space-between', display: 'inline-block' }}>
                 <div id="Image-Margin">
@@ -921,15 +697,10 @@ function OrderPage() {
                     aria-expanded="false">
                     Customer Info
                   </span>
-
-                  <p id="Insert_Here_1"></p>
-
+                  <p className='my-3' id="Insert_Here_1"></p>
                   <p id="Insert_Here_1_A"></p>
-
                   <p id="Insert_Here_1_B"></p>
-
                   <p id="Insert_Here_1_C"></p>
-
                   <ul className="dropdown-menu" id="Conatact_Info" style={{ opacity: '1.0', minWidth: '100%' }}>
                     <li>
                       <span className="dropdown-item" style={{ display: 'block', width: '100%' }}>
@@ -979,21 +750,13 @@ function OrderPage() {
                     aria-expanded="false">
                     Delivery Info
                   </span>
-
-                  <p id="Insert_Here_2"></p>
-
+                  <p className='my-3' id="Insert_Here_2"></p>
                   <p id="Insert_Here_2_A"></p>
-
                   <p id="Insert_Here_2_B"></p>
-
                   <p id="Insert_Here_2_C"></p>
-
                   <p id="Insert_Here_2_D"></p>
-
                   <p id="Insert_Here_2_E"></p>
-
                   <p id="Insert_Here_2_F"></p>
-
                   <ul className="dropdown-menu" id="Delivery_Info" style={{ opacity: '1.0', minWidth: '100%' }}>
                     <li>
                       <span className="dropdown-item">
@@ -1068,13 +831,9 @@ function OrderPage() {
                     aria-expanded="false">
                     Order Info
                   </span>
-
-                  <p id="Insert_Here_3"></p>
-
+                  <p className='my-3' id="Insert_Here_3"></p>
                   <p id="Insert_Here_3_A"></p>
-
                   <p id="Insert_Here_3_B"></p>
-
                   <ul className="dropdown-menu" id="Order_Info" style={{ opacity: '1.0' }}>
                     <li>
                       <span className="dropdown-item">
@@ -1108,14 +867,11 @@ function OrderPage() {
                 </div>
               </div>
             </div>
-
           </div>
-
           <h1 style={{
             fontFamily: 'Lato-Light', fontStyle: 'normal', fontWeight: 400, WebkitFontSmoothing: 'antialiased',
             textAlign: 'center', marginBottom: '100px', marginTop: '100px'
           }}>Item Details</h1>
-
           <div className="row" style={{ margin: '50px', minWidth: 'fit-content' }}>
             <div className="col" style={{ minWidth: 'fit-content' }}>
               <table className="table" id="DataTable" style={{ minWidth: 'fit-content' }}>
@@ -1203,14 +959,13 @@ function OrderPage() {
                       </select>
                     </td>
                     <td>
-                      <input type="file" className="form-control-file" name="image1" id="FileInput"
+                      <input type="file" className="form-control-file" name="image1" id="FileInput" multiple
                         onChange={(e) => handleImage(e, 'Row0')} />
                     </td>
                     <td>
                       <NoteTextArea
                         rowId={'Row0'}
                         value={noteInputs['Ros0'] ? noteInputs['Row0'].note : ''}
-                        // onChange={(value) => handleNoteInputChange(uniqueRowId, value)}
                         onChange={handleNoteInputChange}
                       />
                     </td>
@@ -1219,18 +974,15 @@ function OrderPage() {
               </table>
             </div>
           </div>
-
           <div style={{ marginTop: '-40px', marginLeft: '60px' }}>
             <button className="btn btn-success" type="button" onClick={addRow} style={{ backgroundColor: '#273B42' }}>Add
               Row</button>
-
           </div>
         </form>
-
         <button className="button-28" type='button' onClick={submitform}>Submit</button>
       </div>
     </>
   );
 }
 
-export default OrderPage;
+export default App;
