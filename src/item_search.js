@@ -14,7 +14,7 @@ export default function ItemSearch() {
     }
 
     useEffect(_ => {
-        axios.get('https://vabackend.ajaffe.com/list_items')
+        axios.get('http://192.168.168.14:8000/list_items')
         .then(resp => {
             if (resp.data.filters !== null) {
                 setFilters(resp.data.filters);
@@ -49,7 +49,7 @@ export default function ItemSearch() {
           }
 
           // make a post to item search api
-          axios.post('https://vabackend.ajaffe.com/item_search', { 'filters': filters })
+          axios.post('http://192.168.168.14:8000/item_search', { 'filters': filters })
           .then(function (response) {
             items_ref.current.innerHTML = '';
             items_ref.current.innerHTML = `
