@@ -11,7 +11,7 @@ export default function LoadAllOrders() {
     const [orders, setorders] = useState(null);
 
     useEffect(_ => {
-        axios.get(`http://192.168.168.14:8000/get_all_orders?order_num=${orderno}`)
+        axios.get(`${process.env.REACT_APP_DOMAIN}/get_all_orders?order_num=${orderno}`)
         .then(resp => {
             const result = resp.data;
             setsalesData({
