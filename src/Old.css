@@ -339,7 +339,7 @@ th {
 }
 
 p {
-    margin-left: 40%;
+    margin-left: 45%;
 }
 
 #Image-Margin {
@@ -409,5 +409,5 @@ p {
 #Insert_Here_3_A,
 #Insert_Here_3_B,
 #Insert_Here_1_C {
-    line-height: 0.5;
+    line-height: 1.0;
 }

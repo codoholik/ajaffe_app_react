@@ -89,7 +89,7 @@ function App() {
     }));
   };
 
-  useEffect(() => {}, [noteInputs]);
+  useEffect(() => { }, [noteInputs]);
 
   function addRow() {
     let currRow = globalRow.toString();
@@ -209,7 +209,7 @@ function App() {
     );
     cell.appendChild(componentContainer);
 
-    let actionCell = newRow.insertCell(11);    
+    let actionCell = newRow.insertCell(11);
     let deleteButton = document.createElement('button');
     deleteButton.className = 'btn btn-danger button';
     deleteButton.type = 'button';
@@ -217,7 +217,7 @@ function App() {
     deleteButton.style.borderWidth = '0px';
     deleteButton.innerHTML = 'Delete <i class="bi bi-dash-circle-fill"></i>';
     deleteButton.addEventListener('click', function () {
-      deleteRow(newRow.id); 
+      deleteRow(newRow.id);
     });
     actionCell.innerHTML = '';
     actionCell.appendChild(deleteButton);
@@ -398,7 +398,7 @@ function App() {
       State: Fetch_State(),
       Zip_Code: Fetch_ZipCode(),
       WebOrderID: timeStamp,
-        "Rows": {}
+      "Rows": {}
     };
 
     let table = document.getElementById("DataTable");
@@ -406,60 +406,91 @@ function App() {
     let rows = tbody.getElementsByTagName("tr");
 
     for (let i = 0; i < rows.length; i++) {
-        if (validRows.indexOf(rows[i].id) !== -1) {
-            let place = rows[i].id.charAt(rows[i].id.length - 1);
-            let cells = rows[i].getElementsByTagName("td");
-            let combined_data = {};
+      if (validRows.indexOf(rows[i].id) !== -1) {
+        let place = rows[i].id.charAt(rows[i].id.length - 1);
+        let cells = rows[i].getElementsByTagName("td");
+        let combined_data = {};
 
-            for (let j = 0; j < cells.length; j++) {
-                if (j === 2) {
-                    let selectValue = getMetalValue(place);
-                    combined_data['Metal'] = selectValue;
-                } else if (j === 4) {
-                    let selectValue = getQualityValue(place);
-                    combined_data['Quality'] = selectValue;
-                } else if (j === 6) {
-                    let selectValue = getCenterQualityValue(place);
-                    combined_data['CenterQuality'] = selectValue;
-                } else if (j === 7) {
-                    let selectValue = getCustomerCenterValue(place);
-                    combined_data['CustomerCenter'] = selectValue;
-                } else if (j === 8) {
-                    let selectValue = getCenterValue(place);
-                    combined_data['Center'] = selectValue;
-                } else if (j === 9) {
-                    let str = base64Data['Row' + place];
-                    combined_data['Image'] = str || "";
-                } else {
-                    let inputElement = cells[j].querySelector(`input, #Row${place}`);
-                    if (inputElement) {
-                        let inputValue = inputElement.value;
-                        if (j === 0) {
-                            combined_data['Style'] = inputValue;
-                        }
-                        if (j === 1) {
-                            combined_data['Version'] = inputValue;
-                        }
-                        if (j === 3) {
-                            combined_data['RingSize'] = inputValue;
-                        }
-                        if (j === 5) {
-                            combined_data['CenterSize'] = inputValue;
-                        }
-                        if (j === 10) {
-                            combined_data['Note'] = noteInputs['Row' + place] ? noteInputs['Row' + place] : '';
-                        }
-                    }
-                }
+        for (let j = 0; j < cells.length; j++) {
+          if (j === 2) {
+            let selectValue = getMetalValue(place);
+            combined_data['Metal'] = selectValue;
+          } else if (j === 4) {
+            let selectValue = getQualityValue(place);
+            combined_data['Quality'] = selectValue;
+          } else if (j === 6) {
+            let selectValue = getCenterQualityValue(place);
+            combined_data['CenterQuality'] = selectValue;
+          } else if (j === 7) {
+            let selectValue = getCustomerCenterValue(place);
+            combined_data['CustomerCenter'] = selectValue;
+          } else if (j === 8) {
+            let selectValue = getCenterValue(place);
+            combined_data['Center'] = selectValue;
+          } else if (j === 9) {
+            let str = base64Data['Row' + place];
+            combined_data['Image'] = str || "";
+          } else {
+            let inputElement = cells[j].querySelector(`input, #Row${place}`);
+            if (inputElement) {
+              let inputValue = inputElement.value;
+              if (j === 0) {
+                combined_data['Style'] = inputValue;
+              }
+              if (j === 1) {
+                combined_data['Version'] = inputValue;
+              }
+              if (j === 3) {
+                combined_data['RingSize'] = inputValue;
+              }
+              if (j === 5) {
+                combined_data['CenterSize'] = inputValue;
+              }
+              if (j === 10) {
+                combined_data['Note'] = noteInputs['Row' + place] ? noteInputs['Row' + place] : '';
+              }
             }
-            combined_data1['Rows']['Row' + place] = { Row: i + 1, ...combined_data };
+          }
         }
+        combined_data1['Rows']['Row' + place] = { Row: i + 1, ...combined_data };
+      }
     }
 
-    console.log(combined_data1);
+    // console.log(combined_data1);
+
+    let payload = {
+      'order': combined_data1,
+      'file_name': timeStamp,
+      'email': Fetch_Email()
+    }
+
+    // Make the POST request
+    fetch('https://vabackend.ajaffe.com/odata/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log('JSON data uploaded successfully');
+        } else {
+          console.error('Failed to upload JSON data');
+        }
+      })
+      .catch(error => {
+        console.error('Error uploading JSON data:', error);
+      });
+
+    // Display alert
+    window.alert('The page is submitted');
+
+    // Navigate to the previous page
+    window.history.back();
 
     //console.log(JSON.stringify(combined_data1, null, 2));
-}
+  }
 
 
   const CellLogic = (rowId) => {
@@ -471,7 +502,7 @@ function App() {
       let selectCC = 0, selectCT = 0;
 
       cols.forEach((col, j) => {
-        const selects = col.querySelectorAll('select'); 
+        const selects = col.querySelectorAll('select');
         const selectValue = selects.length > 0 ? selects[0].value : '';
 
         if (j === 7 && selectValue === 'Yes') {
@@ -662,8 +693,8 @@ function App() {
       return para.textContent;
     } else {
       const target = document.getElementById('Insert_Here_2_F');
-      target.textContent = ''; 
-      return ''; 
+      target.textContent = '';
+      return '';
     }
   }
 
@@ -697,10 +728,12 @@ function App() {
                     aria-expanded="false">
                     Customer Info
                   </span>
-                  <p className='my-3' id="Insert_Here_1"></p>
-                  <p id="Insert_Here_1_A"></p>
-                  <p id="Insert_Here_1_B"></p>
-                  <p id="Insert_Here_1_C"></p>
+                  <div style={{maxWidth : '90%', overflow : 'hidden'}}>
+                    <p className='my-3' id="Insert_Here_1"></p>
+                    <p id="Insert_Here_1_A"></p>
+                    <p id="Insert_Here_1_B"></p>
+                    <p id="Insert_Here_1_C"></p>
+                  </div>
                   <ul className="dropdown-menu" id="Conatact_Info" style={{ opacity: '1.0', minWidth: '100%' }}>
                     <li>
                       <span className="dropdown-item" style={{ display: 'block', width: '100%' }}>
