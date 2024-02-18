@@ -10,13 +10,13 @@ const quality_types = ["CZGH", "SI2GH", "SI3GH", "VS2GH", "VS2-SI1HI", "SI-I1"];
 const metal_types = ["10K White", "10K Yellow", "14K Rose", "14K White", "14K Yellow", "18K White", "18K Yellow", "22K White", "22K Yellow", "9K Rose", "9K White", "9K Yellow", "Platinum"];
 const choice = ["Yes", "No"];
 function App() {
-  const [timeStamp, setTimeStamp] = useState();
+  const [OrderNo, setOrderNo] = useState();
 
   useEffect(() => {
     let currentDate = new Date();
-    let timestamp = currentDate.getTime();
-    setTimeStamp(timestamp.toString());
-    let ustrr = "Web Order ID : " + timestamp.toString();
+    let OrderNo = currentDate.getTime();
+    setOrderNo(OrderNo.toString());
+    let ustrr = "Web Order ID : " + OrderNo.toString();
     document.getElementById('epochTime').innerHTML = ustrr;
   }, []);
 
@@ -267,7 +267,7 @@ function App() {
   //     City: Fetch_City(),
   //     State: Fetch_State(),
   //     Zip_Code: Fetch_ZipCode(),
-  //     WebOrderID: timeStamp,
+  //     WebOrderID: OrderNo,
   //   };
 
   //   combined_data1 = { ...combined_data1, ...formData };
@@ -397,7 +397,7 @@ function App() {
       City: Fetch_City(),
       State: Fetch_State(),
       Zip_Code: Fetch_ZipCode(),
-      WebOrderID: timeStamp,
+      WebOrderID: OrderNo,
       "Rows": {}
     };
 
@@ -460,7 +460,7 @@ function App() {
 
     let payload = {
       'order': combined_data1,
-      'file_name': timeStamp,
+      'file_name': OrderNo,
       'email': Fetch_Email()
     }
 
@@ -484,10 +484,10 @@ function App() {
       });
 
     // Display alert
-    window.alert('The page is submitted');
+    window.alert(`Your order No. ${OrderNo} is submitted to Ajaffe you will get the confirmation email at your provided Email ID`);
 
     // Navigate to the previous page
-    window.history.back();
+    window.close();
 
     //console.log(JSON.stringify(combined_data1, null, 2));
   }

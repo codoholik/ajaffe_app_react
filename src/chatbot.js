@@ -125,6 +125,7 @@ const Chatbot = () => {
                 const value = event.target.value;
                 chatUserState(value);
                 event.target.value = '';
+                // setvalidateotp(true); //For using without OTP validation
                 axios.post(`${process.env.REACT_APP_DOMAIN}/otp_generator`, {'email': value}).then(response => {
                     chatBotState(response.data.message);
                     chatBotState("Enter your OTP here");
@@ -137,6 +138,7 @@ const Chatbot = () => {
     const otp_message = (otp_input_id) =>{
         const otp_value = document.getElementById(otp_input_id).value.trim();
         document.getElementById(otp_input_id).value = '';
+        // otpFormState(otp_value); //For using without OTP validation
         axios.post(`${process.env.REACT_APP_DOMAIN}/otp_validation`, {'otp': otp_value}).then(response => {
             if (response.data.success === true) {
                 otpFormState(otp_value);
@@ -172,7 +174,7 @@ const Chatbot = () => {
                 break;
             case 'Create Order':
                 chatUserState(`You selected ${buttonName}`);
-                navigate('/order/create');
+                window.open('/order/create', '_blank');
             case 'Help':
                 break;
             case 'Send Questions to Customer Service':
