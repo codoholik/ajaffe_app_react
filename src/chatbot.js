@@ -12,14 +12,43 @@ import { useNavigate } from 'react-router-dom';
 
 const Chatbot = () => {
     const navigate = useNavigate();
-    
+    const [customerservice, setcustomerservice] = useState(null);
+    const [validate_otp, setvalidateotp] = useState(null);
+    const [otpform, setotpform] = useState(null);
+    const [is_loggedin, setIsLoggedIn] = useState(null);
+
+    const otpFormState = (otp) => {
+        setotpform(otp);
+        setvalidateotp(null);
+        // we need to store the otp in localStorage
+        const user_payload = {
+            "otp": otp,
+            "expires_at": new Date().getTime() + 6*60*60*1000 // Valid only for 6 hours
+        }
+        localStorage.setItem("otp_info", JSON.stringify(user_payload));
+    }
+
     const chatbot_window = useRef();
     // This hook will automatically calls whenever component re-renders or mounted in DOM.
     useEffect(_ => {
         if (chatbot_window.current) {
             chatbot_window.current.scrollTop = chatbot_window.current.scrollHeight;
         }
-    });
+        // here need to check if the otp has expired or not
+        let user_payload = localStorage.getItem("otp_info");
+        if (user_payload) {
+            user_payload = JSON.parse(user_payload);
+            // here we need to check if the otp time exceeds 6 hours or not
+            if (user_payload.expires_at > new Date().getTime()) {
+                // here we need to set the otpform state
+                setotpform(user_payload.otp);
+                setIsLoggedIn(true);
+            } else {
+                localStorage.removeItem("otp_info");
+                setIsLoggedIn(null);
+            }
+        }
+    }, []);
 
     const [messages, setMessages] = useState([]);
 
@@ -78,14 +107,6 @@ const Chatbot = () => {
     const openAllOrdersPage = order_no => {
         setsingleorderstatusdetail(null);
         navigate(`/view/${order_no}/allorders`);
-    }
-
-    const [customerservice, setcustomerservice] = useState(null);
-    const [validate_otp, setvalidateotp] = useState(null);
-    const [otpform, setotpform] = useState(null);
-    const otpFormState = (otp) => {
-        setotpform(otp);
-        setvalidateotp(null);
     }
 
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -152,15 +173,9 @@ const Chatbot = () => {
     // Perform actions based on the clicked button
     const handleButtonClick = (buttonName) => {
         switch (buttonName) {
-            case 'Employee':
-                chatUserState('Employee');
-                chatBotState('Enter your email id');
-                break;
-            case 'Consumer':
-                // botMessage('Please reach out with your query on csd@ajaffe.com');
-                break;
             case 'Retailer':
-                // botMessage('Please reach out with your query on csd@ajaffe.com');
+                chatUserState('Retailer');
+                chatBotState('Enter your email id');
                 break;
             case 'Search Item':
                 chatUserState(`You selected ${buttonName}`);
@@ -175,6 +190,7 @@ const Chatbot = () => {
             case 'Create Order':
                 chatUserState(`You selected ${buttonName}`);
                 window.open('/order/create', '_blank');
+                break;
             case 'Help':
                 break;
             case 'Send Questions to Customer Service':
@@ -218,7 +234,7 @@ const Chatbot = () => {
     }
 
     // creating greeting buttons for users
-    const greetingButtons = ['Employee', 'Consumer', 'Retailer'];
+    const greetingButtons = ['Retailer'];
     const userGreetings = greetingButtons.map(greetingButton =>
         <button key={greetingButton} className="btn btn-outline-primary" onClick={_ => handleButtonClick(greetingButton)}>{greetingButton}</button>
         )
@@ -241,7 +257,7 @@ const Chatbot = () => {
             </div>
             <div className="chatbot__message-window" ref={chatbot_window}>
                 <ul className="chatbot__messages">
-                    <BotMessage msg={userGreetings} />
+                    {is_loggedin === null && <BotMessage msg={userGreetings} />}
                     {messages.map((message, idx) => (
                         <li key={idx} className={message.bot ? 'is-ai animation' : 'is-user animation'}>
                             {message.bot && (
