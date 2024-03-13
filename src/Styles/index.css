@@ -1,0 +1,69 @@
+body {
+    font-family: "Lato", sans-serif;
+    width: 100%;
+    zoom: 0.9;
+    /* zoom: 90%; */
+    /* background-image: url('Category-Banner-Wedding-Bands11.jpg');
+    background-position: center right 90% top 100%;
+    background-attachment:fixed;
+    background-repeat: no-repeat; */
+    /* position: relative; */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.5); /* Adjust the last value (0.2) for opacity */
+}
+
+.content {
+    display: none;
+}
+
+/* Style to create scroll bar in dropdown */
+.scrollable-dropdown {
+    height: auto;
+    max-height: 320px;
+    /* Increase / Decrease value as per your need */
+    overflow-x: hidden;
+}
+
+.content.active {
+    display: block;
+}
+
+/* h1,
+p,
+h3 {
+    display: block;
+} */
+
+div.content {
+    margin-left: 10%;
+}
+
+@media screen and (max-width: 700px) {
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .sidebar a {
+        float: left;
+    }
+
+    div.content {
+        margin-left: 0;
+    }
+}
+
+@media screen and (max-width: 400px) {
+    .sidebar a {
+        text-align: center;
+        float: none;
+    }
+}

@@ -1,0 +1,16 @@
+/* btn:hover {
+    background-color: rgb(39, 59, 66);
+} */
+
+btn.portal-btn:hover {
+    background-color: rgb(39, 59, 66);
+}
+
+.dropdown-item:hover {
+    background-color: lightgray;
+  }
+
+button#dropdownButton {
+    color : white;
+    background-color : #6c757d;
+}

@@ -2,6 +2,7 @@ import App from '../App';
 import ItemSearch from '../item_search';
 import LoadAllOrders from '../loadallorders';
 import OrderPage from '../order_page';
+import Portal from '../portal';
 
 
 const routes = [
@@ -20,6 +21,10 @@ const routes = [
   {
     path: '/order/create',
     element: <OrderPage />
+  },
+  {
+    path: '/portal',
+    element: <Portal />
   }
 ];
 
